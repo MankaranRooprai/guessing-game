@@ -1,67 +1,54 @@
-# Implement a word guessing game initialized with a dictionary and a target word. The user will enter guesses, and the system will indicate whether the guess is correct, providing hints to guide the user. We will begin with a basic version and gradually introduce new requirements to add complexity. Aim to design your game for easy extension and refactor as you learn more.
-
-# Please note that the full problem is challenging. We do not expect you to complete all of it during this session.
-# Maxence Haltel
-# 09:33
-# ### Milestone One: Data Structures and Basic Functionality
-
-# 1. Define a dictionary consisting of valid four-letter words. Store the following list:
-#    ```ruby
-#    ["able", "belt", "bolt", "cast", "cash", "knot", "note", "near", "over", "salt", "wind"]
-#    ```
-
-# 2. Implement a method to randomly select a word from this list.
-# 3. Implement a method to accept a guess and check if it matches the selected word.
-
-# Run this logic to ensure it works as expected.
-
-### Milestone Two: User Interface
-
-# Develop a terminal user interface for the game. Start by welcoming the user, explaining the game rules, and then proceeding with the game. Sample prompts might include:
-
-# ```
-# Welcome to Word Guess! You have 5 turns to guess the word. Please enter your first guess:
-# ```
-# ```
-# Wrong guess! Try again:
-# ```
-# ```
-# You got it! Amazing!
-# ```
-# ```
-# You're out of turns, game over!
-# ```
-
 import random
 
 class Game:
     def __init__(self):
-        self.words = ["able"]
+        self.words = ["able", "coke"]
         self.correct_word = self.choose_word()
+        self.first_try = True
 
-    def get_input(self, turn_num):
-        if turn_num == 0:
+    def get_input(self):
+        # get user input
+        guess = ""
+        if self.first_try == True:
             guess = input("Welcome to Word Guess! You have 5 turns to guess the word. Please enter your first guess:")
-        elif turn_num > 0 and turn_num < 5:
-            guess = input("Wrong guess! Try again:")
+            self.first_try = False
+        else:
+            guess = input("Try again:")
+
         return self.check_word(guess)
 
     def choose_word(self):
         return random.choice(self.words)
     
     def check_word(self, guess):
+
+        # return the response type of the guess
         if guess == self.correct_word:
-            return True
-        return False
+            return "correct"
+        elif guess not in self.words:
+            return "tie"
+        elif not guess:
+            return "tie"
+        else:
+            return "wrong"
 
     def run(self):
         won = False
         self.choose_word()
-        for i in range(5):
-            if self.get_input(i):
+
+        # run the game 5 times
+        i = 5
+        while i > 0:
+            result = self.get_input()
+            if result == "correct":
                 print("You got it! Amazing!")
                 won = True
                 break
+            elif result == "tie":
+                print(f"This is wrong but you still have {i} turns remaining!")
+            elif result == "wrong":
+                i -= 1
+                print(f"WRONG! You have {i} turns remaining!")
         
         if not won:
             print("You're out of turns, game over!")
